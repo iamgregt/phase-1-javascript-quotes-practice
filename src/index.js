@@ -28,9 +28,9 @@ function loadPage(){
 
 
 function renderQuotes(quote){
+    console.log(quote.likes.length)
     let quoteCard = document.createElement('li')
     let quoteId = quote.id
-    quoteCard.dataset.likes = quote.likes.length
     quoteCard.setAttribute('id',quoteId)
     quoteCard.setAttribute('class','quote-card')
     let blockQuote = document.createElement('blockquote')
@@ -47,10 +47,24 @@ function renderQuotes(quote){
     let likes = quote.likes.length
     buttonSuccess.innerHTML = `Likes: <span>${likes}</span>`
 
-    buttonSuccess.addEventListener('click', quoteCard => {
-        newLike(quoteCard)
+ 
+    buttonSuccess.addEventListener('click', e =>{
+        pathId = e.path[2].id
+        let bodyForPost = {
+            "quoteId": pathId,
+            "createdAt": 1558524358
+        }
+        fetch('http://localhost:3000/likes',{
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify(bodyForPost)
+            
+        })
+        .then(resp => resp.json())
+        .then(r => console.log(r))
     })
-
 
     let buttonDanger = document.createElement('button')
     buttonDanger.setAttribute('class','btn-danger')
@@ -106,16 +120,6 @@ function removeQuoteCard(quoteCard){
 
 
     
-}
-
-
-function newLike(quoteCard){
-    let parentElem = quoteCard.path[0]
-    console.log(parentElem.innerHTML)
-    let quoteCardId = quoteCard.path[2].id
-    let likeCount = quoteCard.path[2].dataset.likes
-    likeCount++
-    parentElem.innerHTML = `Likes: <span>${likeCount}</span>`
 }
 
 loadPage()
